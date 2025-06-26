@@ -1,0 +1,408 @@
+<script setup>
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n()
+
+const ipInfo = ref('')
+const currentTime = ref('')
+const currentDate = ref('')
+let timer = null
+
+const updateDateTime = () => {
+  const now = new Date();
+  const lang = locale.value === 'zh' ? 'zh-CN' : 'en-US';
+  currentDate.value = now.toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' });
+  currentTime.value = now.toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: locale.value === 'en' });
+};
+
+const toggleLanguage = () => {
+  locale.value = locale.value === 'zh' ? 'en' : 'zh';
+  updateDateTime(); // 更新时间显示格式
+};
+
+const currentLanguageText = computed(() => {
+  return locale.value === 'zh' ? t('switchToEn') : t('switchToZh');
+});
+
+onMounted(() => {
+  fetch('https://api.ipinfo.io/lite/me?token=8f4d4c2c4b72b0')
+    .then(response => response.json())
+    .then(data => {
+      if (data.ip && data.asn && data.as_name) {
+        const maskedIp = data.ip.replace(/\.\d+$/, '.*');
+        const location = data.country_code ? `${data.country_code} 地区` : '';
+        ipInfo.value = t('welcome', {
+          location,
+          provider: data.as_name,
+          asn: data.asn,
+          ip: maskedIp
+        });
+      }
+    })
+    .catch(error => {
+      console.error('IP/ASN Acquisition Failed：', error);
+      ipInfo.value = t('locationError');
+    });
+
+  updateDateTime();
+  timer = setInterval(updateDateTime, 1000);
+})
+
+onUnmounted(() => {
+  if (timer) {
+    clearInterval(timer);
+  }
+})
+</script>
+
+<template>
+  <div id="app-container">
+    <!-- 语言切换按钮 -->
+    <div class="language-toggle">
+      <button @click="toggleLanguage" class="lang-btn">
+        {{ currentLanguageText }}
+      </button>
+    </div>
+
+    <div class="datetime-box">
+      <div class="date">{{ currentDate }}</div>
+      <div class="time">{{ currentTime }}</div>
+    </div>
+
+    <div class="card">
+      <img class="avatar" src="/avatar.jpg" alt="avatar" />
+      <h1>{{ t('name') }}</h1>
+      <p class="subtitle">{{ t('subtitle') }}</p>
+
+      <div class="links">
+        <a href="https://github.com/AsterZC19" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          {{ t('links.github') }}
+        </a>
+        <!-- <a href="https://twitter.com/yourusername" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          {{ t('links.twitter') }}
+        </a> -->
+        <a href="starminus0812@gmail.com">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+          {{ t('links.email') }}
+        </a>
+      </div>
+
+      <div class="footer">
+        <p v-if="ipInfo" class="ip-info">{{ ipInfo }}</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+:root {
+  --bg-color-1: #8785a2;
+  --bg-color-2: #ffe2e2;
+  --bg-color-3: #ffc7c7;
+  --card-bg: rgba(246, 246, 246, 0.85); /* #f6f6f6 */
+  --text-color: #3a3a3a;
+  --link-bg: rgba(255, 226, 226, 0.7);
+  --link-hover-bg: #ffe2e2;
+  --icon-color: #5c5c5c;
+}
+
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', 'Arial', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  color: var(--text-color);
+  background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-1));
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; /* 防止页面滚动 */
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#app-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  max-height: 100vh; /* 限制最大高度为视口高度 */
+  padding: 2vh 2vw; /* 使用视口单位进行响应式间距 */
+  box-sizing: border-box;
+}
+
+.datetime-box {
+  position: fixed;
+  top: 2vh; /* 使用视口高度单位 */
+  left: 2vw; /* 使用视口宽度单位 */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 1vh 2vw; /* 响应式内边距 */
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #444;
+  z-index: 10;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.datetime-box .date {
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem); /* 响应式字体大小 */
+  font-weight: 500;
+}
+
+.datetime-box .time {
+  font-size: clamp(1rem, 2.5vw, 1.3rem); /* 响应式字体大小 */
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+.card {
+  text-align: center;
+  padding: 5vh 4vw; /* 使用视口单位进行响应式内边距 */
+  border-radius: 20px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  width: min(650px, 90vw); /* 响应式最大宽度 */
+  max-height: 90vh;
+  box-sizing: border-box;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar {
+  width: clamp(80px, 12vw, 120px); /* 响应式头像大小 */
+  height: clamp(80px, 12vw, 120px);
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
+h1 {
+  margin: 2vh 0 1vh;
+  font-size: clamp(1.5rem, 4vw, 2.2rem); /* 响应式标题字体 */
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.1rem); /* 响应式副标题字体 */
+  color: #555;
+  margin-bottom: 4vh;
+  min-height: 3em;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 15px); /* 响应式间距 */
+  flex-wrap: wrap;
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+  background: var(--link-bg);
+  padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px); /* 响应式内边距 */
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  font-size: clamp(0.8rem, 1.8vw, 1rem); /* 响应式字体大小 */
+}
+
+.links a svg {
+  stroke: var(--icon-color);
+  transition: transform 0.3s ease;
+  width: clamp(18px, 3vw, 24px); /* 响应式图标大小 */
+  height: clamp(18px, 3vw, 24px);
+}
+
+.links a:hover {
+  transform: translateY(-3px);
+  background: var(--link-hover-bg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.links a:hover svg {
+  transform: scale(1.1);
+}
+
+.footer {
+  margin-top: 4vh; /* 使用视口高度单位 */
+  height: 3vh; /* 响应式高度 */
+}
+
+.ip-info {
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem); /* 响应式字体大小 */
+  color: #666;
+  opacity: 0;
+  animation: fadeIn 0.5s 0.5s ease-out forwards;
+}
+
+/* 语言切换按钮样式 */
+.language-toggle {
+  position: fixed;
+  top: 2vh;
+  right: 2vw;
+  z-index: 11;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.lang-btn {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  padding: 1vh 2vw;
+  border-radius: 15px;
+  color: #444;
+  font-weight: 500;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.lang-btn:active {
+  transform: translateY(0);
+}
+
+/* 响应式设计 - 媒体查询 */
+
+/* 小屏幕设备 (手机竖屏) */
+@media (max-width: 480px) {
+  .datetime-box {
+    top: 1vh;
+    left: 2vw;
+    padding: 0.8vh 1.5vw;
+  }
+
+  .language-toggle {
+    top: 1vh;
+    right: 2vw;
+  }
+
+  .lang-btn {
+    padding: 0.8vh 1.5vw;
+    font-size: clamp(0.6rem, 2vw, 0.8rem);
+  }
+
+  .card {
+    padding: 3vh 3vw;
+    max-width: 90vw;
+  }
+
+  .links {
+    flex-direction: column;
+    align-items: center;
+    gap: 1vh;
+  }
+
+  .links a {
+    width: 80%;
+    justify-content: center;
+  }
+}
+
+/* 小屏幕设备 (手机横屏) */
+@media (max-width: 768px) and (orientation: landscape) {
+  .datetime-box {
+    top: 1vh;
+    left: 1vw;
+    padding: 0.5vh 1vw;
+  }
+
+  .language-toggle {
+    top: 1vh;
+    right: 1vw;
+  }
+
+  .lang-btn {
+    padding: 0.5vh 1vw;
+    font-size: clamp(0.6rem, 1.8vw, 0.8rem);
+  }
+
+  .card {
+    padding: 2vh 3vw;
+    max-width: 70vw;
+  }
+
+  .avatar {
+    width: clamp(60px, 8vw, 80px);
+    height: clamp(60px, 8vw, 80px);
+  }
+
+  h1 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    margin: 1vh 0;
+  }
+
+  .subtitle {
+    margin-bottom: 2vh;
+  }
+
+  .footer {
+    margin-top: 2vh;
+    height: 2vh;
+  }
+}
+
+/* 大屏幕设备优化 */
+@media (min-width: 1200px) {
+  .datetime-box {
+    top: 3vh;
+    left: 3vw;
+  }
+
+  .language-toggle {
+    top: 3vh;
+    right: 3vw;
+  }
+
+  .card {
+    max-width: 600px;
+    padding: 6vh 5vw;
+  }
+}
+
+/* 超宽屏幕优化 */
+@media (min-width: 1920px) {
+  .datetime-box {
+    font-size: 1.2em;
+  }
+
+  .card {
+    max-width: 700px;
+  }
+}
+</style>
