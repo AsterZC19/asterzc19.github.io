@@ -58,16 +58,30 @@ onUnmounted(() => {
 
 <template>
   <div id="app-container">
-    <!-- 语言切换按钮 -->
-    <div class="language-toggle">
+    <!-- 移动端顶部栏 -->
+    <div class="mobile-header">
+      <div class="datetime-box">
+        <div class="date">{{ currentDate }}</div>
+        <div class="time">{{ currentTime }}</div>
+      </div>
+      <div class="language-toggle">
+        <button @click="toggleLanguage" class="lang-btn">
+          {{ currentLanguageText }}
+        </button>
+      </div>
+    </div>
+
+    <!-- 桌面端时间日期框 (仅在大屏幕显示) -->
+    <div class="datetime-box desktop-only">
+      <div class="date">{{ currentDate }}</div>
+      <div class="time">{{ currentTime }}</div>
+    </div>
+
+    <!-- 桌面端语言切换按钮 (仅在大屏幕显示) -->
+    <div class="language-toggle desktop-only">
       <button @click="toggleLanguage" class="lang-btn">
         {{ currentLanguageText }}
       </button>
-    </div>
-
-    <div class="datetime-box">
-      <div class="date">{{ currentDate }}</div>
-      <div class="time">{{ currentTime }}</div>
     </div>
 
     <div class="card">
@@ -80,10 +94,6 @@ onUnmounted(() => {
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
           {{ t('links.github') }}
         </a>
-        <!-- <a href="https://twitter.com/yourusername" target="_blank">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-          {{ t('links.twitter') }}
-        </a> -->
         <a href="starminus0812@gmail.com">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
           {{ t('links.email') }}
@@ -134,7 +144,7 @@ body {
   align-items: center;
   min-height: 100vh;
   max-height: 100vh; /* 限制最大高度为视口高度 */
-  padding: 2vh 2vw; /* 使用视口单位进行响应式间距 */
+  padding: 2vh; /* 使用视口单位进行响应式间距 */
   box-sizing: border-box;
 }
 
@@ -297,64 +307,254 @@ h1 {
   transform: translateY(0);
 }
 
+/* 桌面端和移动端元素显示控制 */
+.mobile-header {
+  display: none; /* 默认隐藏移动端头部 */
+}
+
+.desktop-only {
+  display: block; /* 默认显示桌面端元素 */
+}
+
+/* 桌面端样式保持不变 */
+.desktop-only.datetime-box {
+  position: fixed;
+  top: 2vh;
+  left: 2vw;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 1vh 2vw;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #444;
+  z-index: 10;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.desktop-only.language-toggle {
+  position: fixed;
+  top: 2vh;
+  right: 2vw;
+  z-index: 11;
+  animation: fadeIn 0.8s ease-out;
+}
+
 /* 响应式设计 - 媒体查询 */
 
-/* 小屏幕设备 (手机竖屏) */
-@media (max-width: 480px) {
-  .datetime-box {
-    top: 1vh;
-    left: 2vw;
-    padding: 0.8vh 1.5vw;
+/* 移动端专用布局 */
+@media (max-width: 768px) {
+  /* 显示/隐藏控制 */
+  .mobile-header {
+    display: flex !important;
   }
 
-  .language-toggle {
-    top: 1vh;
-    right: 2vw;
+  .desktop-only {
+    display: none !important;
   }
 
-  .lang-btn {
-    padding: 0.8vh 1.5vw;
-    font-size: clamp(0.6rem, 2vw, 0.8rem);
+  body {
+    overflow-y: auto; /* 移动端允许滚动 */
+    overflow-x: hidden; /* 防止水平滚动 */
   }
 
+  #app-container {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch; /* 改为拉伸对齐 */
+    min-height: 100vh;
+    max-height: none; /* 移除高度限制 */
+    padding: 0;
+    width: 100%;
+  }
+
+  /* 移动端顶部栏 */
+  .mobile-header {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 2vh 4vw;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    box-sizing: border-box;
+  }
+
+  .mobile-header .datetime-box {
+    position: static;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
+    text-align: left; /* 左对齐 */
+  }
+
+  .mobile-header .datetime-box .date {
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+  }
+
+  .mobile-header .datetime-box .time {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    margin-top: 0;
+  }
+
+  .mobile-header .language-toggle {
+    position: static;
+    top: auto;
+    right: auto;
+    animation: none;
+  }
+
+  .mobile-header .lang-btn {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    min-width: 70px;
+  }
+
+  /* 移动端主卡片 */
   .card {
-    padding: 3vh 3vw;
-    max-width: 90vw;
+    width: calc(100% - 8vw); /* 使用calc确保正确计算 */
+    max-width: none;
+    max-height: none;
+    margin: 3vh 4vw; /* 左右边距一致 */
+    padding: 6vh 6vw;
+    position: relative;
+    box-sizing: border-box;
+    align-self: center; /* 居中对齐 */
+  }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 2vh;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 2vh 0 1vh;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 4vh;
+    min-height: auto;
+    line-height: 1.5;
   }
 
   .links {
     flex-direction: column;
-    align-items: center;
-    gap: 1vh;
+    gap: 2vh;
+    margin-bottom: 3vh;
+    width: 100%;
   }
 
   .links a {
-    width: 80%;
+    width: 100%;
     justify-content: center;
+    padding: 3vh 4vw;
+    font-size: 1rem;
+    border-radius: 15px;
+    box-sizing: border-box;
+  }
+
+  .links a svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .footer {
+    margin-top: 3vh;
+    height: auto;
+    padding-bottom: 2vh;
+    width: 100%;
+  }
+
+  .ip-info {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: center;
   }
 }
 
-/* 小屏幕设备 (手机横屏) */
-@media (max-width: 768px) and (orientation: landscape) {
-  .datetime-box {
-    top: 1vh;
-    left: 1vw;
-    padding: 0.5vh 1vw;
+/* 小屏幕设备 (手机竖屏) 特殊优化 */
+@media (max-width: 480px) {
+  .mobile-header {
+    padding: 1.5vh 3vw;
   }
 
-  .language-toggle {
-    top: 1vh;
-    right: 1vw;
+  .mobile-header .datetime-box .date {
+    font-size: 0.75rem;
   }
 
-  .lang-btn {
-    padding: 0.5vh 1vw;
-    font-size: clamp(0.6rem, 1.8vw, 0.8rem);
+  .mobile-header .datetime-box .time {
+    font-size: 1rem;
+  }
+
+  .mobile-header .lang-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    min-width: 60px;
   }
 
   .card {
-    padding: 2vh 3vw;
-    max-width: 70vw;
+    width: calc(100% - 6vw);
+    padding: 4vh 4vw;
+    margin: 2vh 3vw;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .links a {
+    padding: 2.5vh 3vw;
+    font-size: 0.9rem;
+  }
+}
+
+/* 手机横屏也使用移动端布局 */
+@media (max-width: 768px) and (orientation: landscape) {
+  .mobile-header {
+    padding: 1vh 3vw;
+  }
+
+  .mobile-header .datetime-box .date {
+    font-size: 0.75rem;
+  }
+
+  .mobile-header .datetime-box .time {
+    font-size: 1rem;
+  }
+
+  .mobile-header .lang-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    min-width: 60px;
+  }
+
+  .card {
+    width: calc(100% - 6vw);
+    margin: 2vh 3vw;
+    padding: 3vh 4vw;
   }
 
   .avatar {
@@ -363,17 +563,27 @@ h1 {
   }
 
   h1 {
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
     margin: 1vh 0;
   }
 
   .subtitle {
     margin-bottom: 2vh;
+    font-size: 0.9rem;
+  }
+
+  .links {
+    gap: 1.5vh;
+  }
+
+  .links a {
+    padding: 2vh 3vw;
+    font-size: 0.9rem;
   }
 
   .footer {
     margin-top: 2vh;
-    height: 2vh;
+    height: auto;
   }
 }
 
@@ -403,6 +613,24 @@ h1 {
 
   .card {
     max-width: 700px;
+  }
+}
+
+/* 平板设备横屏优化 */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+  .card {
+    max-width: 70vw;
+    padding: 4vh 5vw;
+  }
+
+  .links {
+    flex-direction: row;
+    gap: 2vw;
+  }
+
+  .links a {
+    flex: 1;
+    padding: 2vh 3vw;
   }
 }
 </style>
