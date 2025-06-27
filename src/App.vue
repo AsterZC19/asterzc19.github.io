@@ -123,18 +123,36 @@ body {
   margin: 0;
   font-family: 'Helvetica Neue', 'Arial', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   color: var(--text-color);
-  background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-1));
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(135, 133, 162, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 199, 199, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 226, 226, 0.3) 0%, transparent 50%),
+    linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-1));
+  background-size: 300% 300%, 250% 250%, 200% 200%, 600% 600%;
+  animation: gradientBG 12s ease infinite;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden; /* 防止页面滚动 */
+  /* 确保移动端也能看到背景效果 */
+  background-attachment: fixed;
 }
 
 @keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { 
+    background-position: 0% 50%, 100% 0%, 50% 100%, 0% 50%; 
+  }
+  25% { 
+    background-position: 100% 100%, 0% 50%, 100% 0%, 100% 50%; 
+  }
+  50% { 
+    background-position: 50% 0%, 50% 100%, 0% 50%, 100% 50%; 
+  }
+  75% { 
+    background-position: 0% 50%, 100% 50%, 50% 0%, 50% 100%; 
+  }
+  100% { 
+    background-position: 0% 50%, 100% 0%, 50% 100%, 0% 50%; 
+  }
 }
 
 #app-container {
@@ -345,6 +363,14 @@ h1 {
 
 /* 移动端专用布局 */
 @media (max-width: 768px) {
+  /* 移动端背景优化 */
+  body {
+    /* 移动端使用 scroll 而不是 fixed，避免 iOS Safari 的显示问题 */
+    background-attachment: scroll;
+    /* 减少动画复杂度以提升移动端性能 */
+    animation: gradientBG 15s ease infinite;
+  }
+
   /* 显示/隐藏控制 */
   .mobile-header {
     display: flex !important;
@@ -488,6 +514,15 @@ h1 {
 
 /* 小屏幕设备 (手机竖屏) 特殊优化 */
 @media (max-width: 480px) {
+  body {
+    /* 在小屏幕设备上简化背景以提升性能 */
+    background: 
+      radial-gradient(circle at 40% 40%, rgba(255, 226, 226, 0.2) 0%, transparent 60%),
+      linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-1));
+    background-size: 200% 200%, 400% 400%;
+    animation: gradientBG 18s ease infinite;
+  }
+
   .mobile-header {
     padding: 1.5vh 3vw;
   }
