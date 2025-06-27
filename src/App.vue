@@ -168,18 +168,36 @@ body {
 
 .datetime-box {
   position: fixed;
-  top: 2vh; /* 使用视口高度单位 */
-  left: 2vw; /* 使用视口宽度单位 */
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 1vh 2vw; /* 响应式内边距 */
+  top: 2vh;
+  left: 2vw;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 1vh 2vw;
   border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.2);
   text-align: center;
   color: #444;
   z-index: 10;
   animation: fadeIn 0.8s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.datetime-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  opacity: 1;
+  pointer-events: none;
 }
 
 .datetime-box .date {
@@ -254,29 +272,52 @@ h1 {
   text-decoration: none;
   color: var(--text-color);
   font-weight: 500;
-  background: var(--link-bg);
-  padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px); /* 响应式内边距 */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: clamp(8px, 1.5vh, 10px) clamp(16px, 3vw, 22px);
   border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  font-size: clamp(0.8rem, 1.8vw, 1rem); /* 响应式字体大小 */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: clamp(0.8rem, 1.8vw, 1rem);
+  position: relative;
+  overflow: hidden;
 }
 
-.links a svg {
-  stroke: var(--icon-color);
-  transition: transform 0.3s ease;
-  width: clamp(18px, 3vw, 24px); /* 响应式图标大小 */
-  height: clamp(18px, 3vw, 24px);
+.links a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.links a:hover::before {
+  opacity: 1;
 }
 
 .links a:hover {
-  transform: translateY(-3px);
-  background: var(--link-hover-bg);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px) scale(1.02);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-.links a:hover svg {
-  transform: scale(1.1);
+.links a:active {
+  transform: translateY(0) scale(0.98);
+  transition: all 0.1s ease;
 }
 
 .footer {
@@ -301,28 +342,55 @@ h1 {
 }
 
 .lang-btn {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 1vh 2vw;
   border-radius: 15px;
   color: #444;
   font-weight: 500;
   font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.lang-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lang-btn:hover::before {
+  opacity: 1;
 }
 
 .lang-btn:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .lang-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.95);
+  transition: all 0.1s ease;
 }
 
 /* 桌面端和移动端元素显示控制 */
@@ -339,24 +407,33 @@ h1 {
   position: fixed;
   top: 2vh;
   left: 2vw;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding: 1vh 2vw;
   border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.2);
   text-align: center;
   color: #444;
   z-index: 10;
   animation: fadeIn 0.8s ease-out;
+  overflow: hidden;
 }
 
-.desktop-only.language-toggle {
-  position: fixed;
-  top: 2vh;
-  right: 2vw;
-  z-index: 11;
-  animation: fadeIn 0.8s ease-out;
+.desktop-only.datetime-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  opacity: 1;
+  pointer-events: none;
 }
 
 /* 响应式设计 - 媒体查询 */
@@ -420,18 +497,34 @@ h1 {
     border-radius: 0;
     box-shadow: none;
     animation: none;
-    text-align: left; /* 左对齐 */
+    text-align: left;
+    overflow: visible;
+    border: none;
+    z-index: 1;
+    flex-shrink: 0;
+    display: block;
+    min-height: auto;
+  }
+
+  .mobile-header .datetime-box::before {
+    display: none;
   }
 
   .mobile-header .datetime-box .date {
     font-size: 0.85rem;
     margin-bottom: 2px;
+    position: static;
+    z-index: auto;
+    line-height: normal;
   }
 
   .mobile-header .datetime-box .time {
     font-size: 1.1rem;
     letter-spacing: 1px;
     margin-top: 0;
+    position: static;
+    z-index: auto;
+    line-height: normal;
   }
 
   .mobile-header .language-toggle {
@@ -439,12 +532,29 @@ h1 {
     top: auto;
     right: auto;
     animation: none;
+    z-index: 1;
+    flex-shrink: 0;
   }
 
   .mobile-header .lang-btn {
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 0.8rem;
     min-width: 70px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 1;
+  }
+
+  .mobile-header .lang-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
   }
 
   /* 移动端主卡片 */
@@ -525,18 +635,26 @@ h1 {
 
   .mobile-header {
     padding: 1.5vh 3vw;
+    min-height: 55px;
+  }
+
+  .mobile-header .datetime-box {
+    padding: 0;
+    min-height: auto;
   }
 
   .mobile-header .datetime-box .date {
     font-size: 0.75rem;
+    margin-bottom: 2px;
   }
 
   .mobile-header .datetime-box .time {
     font-size: 1rem;
+    margin-top: 0;
   }
 
   .mobile-header .lang-btn {
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-size: 0.75rem;
     min-width: 60px;
   }
@@ -570,14 +688,22 @@ h1 {
 @media (max-width: 768px) and (orientation: landscape) {
   .mobile-header {
     padding: 1vh 3vw;
+    min-height: 50px;
+  }
+
+  .mobile-header .datetime-box {
+    padding: 0;
+    min-height: auto;
   }
 
   .mobile-header .datetime-box .date {
     font-size: 0.75rem;
+    margin-bottom: 2px;
   }
 
   .mobile-header .datetime-box .time {
     font-size: 1rem;
+    margin-top: 0;
   }
 
   .mobile-header .lang-btn {
