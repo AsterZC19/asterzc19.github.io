@@ -2,6 +2,8 @@
 
 This project is my personal homepage, built with [Vue 3](https://vuejs.org/), [Vite](https://vitejs.dev/), and [TypeScript](https://www.typescriptlang.org/).
 
+🌐 **Live Site**: [https://starminus.uk](https://starminus.uk)
+
 It is configured for easy deployment to GitHub Pages.
 
 ## Project Setup
