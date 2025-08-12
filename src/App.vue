@@ -120,9 +120,9 @@ onUnmounted(() => {
     </section>
 
     <!-- Page 2: Detailed Info -->
-    <section class="scroll-section">
+    <!-- <section class="scroll-section">
       <DetailedInfoCard />
-    </section>
+    </section> -->
   </div>
 </template>
 
