@@ -7,7 +7,8 @@ const messages = {
     links: {
       github: 'GitHub',
       twitter: 'Twitter',
-      email: '邮箱'
+      email: '邮箱',
+      blog: '博客'
     },
     welcome: '欢迎来自 {location} {provider} ({asn}) 的访客 ({ip})',
     locationError: '无法获取您的地理位置信息',
@@ -21,7 +22,8 @@ const messages = {
     links: {
       github: 'GitHub',
       twitter: 'Twitter',
-      email: 'Email'
+      email: 'Email',
+      blog: 'Blog'
     },
     welcome: 'Welcome visitor from {location} {provider} ({asn}) ({ip})',
     locationError: 'Unable to get your location information',
